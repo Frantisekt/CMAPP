@@ -1,0 +1,27 @@
+service: demo-serverless
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java11
+  region: us-east-1
+  memorySize: 512
+  timeout: 30
+  environment:
+    SPRING_PROFILES_ACTIVE: ${opt:stage, 'dev'}
+
+package:
+  artifact: target/demo-serverless.jar
+
+functions:
+  api:
+    handler: com.demo.serverless.ApiHandler
+    events:
+      - http:
+          path: /api/{proxy+}
+          method: any
+          cors: true
+
+plugins:
+  - serverless-offline 
