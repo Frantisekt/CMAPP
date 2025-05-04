@@ -4,8 +4,8 @@ import com.demo.serverless.application.usecases.ManageDentalRecordUseCase;
 import com.demo.serverless.domain.model.DentalRecord;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/dental-records")
@@ -17,29 +17,35 @@ public class DentalRecordController {
     }
 
     @PostMapping
-    public ResponseEntity<DentalRecord> createDentalRecord(@RequestBody DentalRecord record) {
-        return ResponseEntity.ok(manageDentalRecordUseCase.createDentalRecord(record));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<DentalRecord> updateDentalRecord(@PathVariable String id, @RequestBody DentalRecord record) {
-        record.setId(id);
-        return ResponseEntity.ok(manageDentalRecordUseCase.updateDentalRecord(record));
+    public ResponseEntity<DentalRecord> createDentalRecord(@RequestBody DentalRecord dentalRecord) {
+        return ResponseEntity.ok(manageDentalRecordUseCase.createDentalRecord(dentalRecord));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DentalRecord> getDentalRecord(@PathVariable String id) {
+    public ResponseEntity<DentalRecord> getDentalRecordById(@PathVariable UUID id) {
         return ResponseEntity.ok(manageDentalRecordUseCase.getDentalRecord(id));
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<DentalRecord>> getPatientDentalRecords(@PathVariable String patientId) {
-        return ResponseEntity.ok(manageDentalRecordUseCase.getPatientDentalRecords(patientId));
+    public ResponseEntity<DentalRecord> getDentalRecordByPatientId(@PathVariable UUID patientId) {
+        return ResponseEntity.ok(manageDentalRecordUseCase.getDentalRecordByPatientId(patientId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DentalRecord>> getAllDentalRecords() {
+        return ResponseEntity.ok(manageDentalRecordUseCase.getAllDentalRecords());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DentalRecord> updateDentalRecord(
+            @PathVariable UUID id,
+            @RequestBody DentalRecord dentalRecord) {
+        return ResponseEntity.ok(manageDentalRecordUseCase.updateDentalRecord(id, dentalRecord));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDentalRecord(@PathVariable String id) {
+    public ResponseEntity<Void> deleteDentalRecord(@PathVariable UUID id) {
         manageDentalRecordUseCase.deleteDentalRecord(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 } 

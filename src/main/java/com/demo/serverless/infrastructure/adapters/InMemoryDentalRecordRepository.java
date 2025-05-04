@@ -7,38 +7,47 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Repository
 @Profile({"local", "dev"})
 public class InMemoryDentalRecordRepository implements DentalRecordRepository {
-    private final ConcurrentHashMap<String, DentalRecord> records = new ConcurrentHashMap<>();
+    private final Map<UUID, DentalRecord> dentalRecords = new ConcurrentHashMap<>();
 
     @Override
-    public DentalRecord save(DentalRecord record) {
-        if (record.getId() == null) {
-            record.setId(java.util.UUID.randomUUID().toString());
-        }
-        records.put(record.getId(), record);
-        return record;
+    public DentalRecord save(DentalRecord dentalRecord) {
+        dentalRecords.put(dentalRecord.getId(), dentalRecord);
+        return dentalRecord;
     }
 
     @Override
-    public Optional<DentalRecord> findById(String id) {
-        return Optional.ofNullable(records.get(id));
+    public Optional<DentalRecord> findById(UUID id) {
+        return Optional.ofNullable(dentalRecords.get(id));
     }
 
     @Override
-    public List<DentalRecord> findByPatientId(String patientId) {
-        return records.values().stream()
-                .filter(record -> record.getPatientId().equals(patientId))
-                .collect(Collectors.toList());
+    public Optional<DentalRecord> findByPatientId(UUID patientId) {
+        return dentalRecords.values().stream()
+            .filter(record -> record.getPatientId().equals(patientId))
+            .findFirst();
     }
 
     @Override
-    public void delete(String id) {
-        records.remove(id);
+    public List<DentalRecord> findAll() {
+        return new ArrayList<>(dentalRecords.values());
+    }
+
+    @Override
+    public void delete(UUID id) {
+        dentalRecords.remove(id);
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return dentalRecords.containsKey(id);
     }
 } 

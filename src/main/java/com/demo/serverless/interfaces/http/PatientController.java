@@ -4,8 +4,8 @@ import com.demo.serverless.application.usecases.ManagePatientUseCase;
 import com.demo.serverless.domain.model.Patient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/patients")
@@ -21,14 +21,8 @@ public class PatientController {
         return ResponseEntity.ok(managePatientUseCase.createPatient(patient));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable String id, @RequestBody Patient patient) {
-        patient.setId(id);
-        return ResponseEntity.ok(managePatientUseCase.updatePatient(patient));
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatient(@PathVariable String id) {
+    public ResponseEntity<Patient> getPatientById(@PathVariable UUID id) {
         return ResponseEntity.ok(managePatientUseCase.getPatient(id));
     }
 
@@ -37,7 +31,7 @@ public class PatientController {
         return ResponseEntity.ok(managePatientUseCase.getPatientByDni(dni));
     }
 
-    @GetMapping("/record-number/{recordNumber}")
+    @GetMapping("/record/{recordNumber}")
     public ResponseEntity<Patient> getPatientByRecordNumber(@PathVariable String recordNumber) {
         return ResponseEntity.ok(managePatientUseCase.getPatientByRecordNumber(recordNumber));
     }
@@ -47,8 +41,15 @@ public class PatientController {
         return ResponseEntity.ok(managePatientUseCase.getAllPatients());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Patient> updatePatient(
+            @PathVariable UUID id,
+            @RequestBody Patient patient) {
+        return ResponseEntity.ok(managePatientUseCase.updatePatient(patient));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable String id) {
+    public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {
         managePatientUseCase.deletePatient(id);
         return ResponseEntity.noContent().build();
     }

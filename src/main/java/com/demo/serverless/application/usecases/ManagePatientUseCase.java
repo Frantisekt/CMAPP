@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ManagePatientUseCase {
@@ -21,15 +22,15 @@ public class ManagePatientUseCase {
     }
 
     public Patient updatePatient(Patient patient) {
-        if (patientRepository.findById(patient.getId()).isEmpty()) {
-            throw PatientNotFoundException.byId(patient.getId());
+        if (!patientRepository.existsById(patient.getId())) {
+            throw PatientNotFoundException.byId(patient.getId().toString());
         }
         return patientRepository.save(patient);
     }
 
-    public Patient getPatient(String id) {
+    public Patient getPatient(UUID id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> PatientNotFoundException.byId(id));
+                .orElseThrow(() -> PatientNotFoundException.byId(id.toString()));
     }
 
     public Patient getPatientByDni(String dni) {
@@ -41,9 +42,9 @@ public class ManagePatientUseCase {
         return patientRepository.findAll();
     }
 
-    public void deletePatient(String id) {
-        if (patientRepository.findById(id).isEmpty()) {
-            throw PatientNotFoundException.byId(id);
+    public void deletePatient(UUID id) {
+        if (!patientRepository.existsById(id)) {
+            throw PatientNotFoundException.byId(id.toString());
         }
         patientRepository.delete(id);
     }

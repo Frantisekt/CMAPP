@@ -9,21 +9,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 @Profile({"local", "dev"})
 public class InMemoryPatientRepository implements PatientRepository {
-    private final ConcurrentHashMap<String, Patient> patients = new ConcurrentHashMap<>();
+    private final Map<UUID, Patient> patients = new ConcurrentHashMap<>();
     private final AtomicInteger recordCounter = new AtomicInteger(0);
     private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
 
     @Override
     public Patient save(Patient patient) {
         if (patient.getId() == null) {
-            patient.setId(java.util.UUID.randomUUID().toString());
+            patient.setId(UUID.randomUUID());
             // Generar número de expediente solo para nuevos pacientes
             if (patient.getRecordNumber() == null) {
                 //String year = LocalDateTime.now().format(YEAR_FORMATTER);
@@ -37,7 +40,7 @@ public class InMemoryPatientRepository implements PatientRepository {
     }
 
     @Override
-    public Optional<Patient> findById(String id) {
+    public Optional<Patient> findById(UUID id) {
         return Optional.ofNullable(patients.get(id));
     }
 
@@ -54,14 +57,19 @@ public class InMemoryPatientRepository implements PatientRepository {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(UUID id) {
         patients.remove(id);
     }
 
     @Override
     public Optional<Patient> findByRecordNumber(String recordNumber) {
         return patients.values().stream()
-                .filter(patient -> patient.getRecordNumber().equals(recordNumber))
+                .filter(p -> p.getRecordNumber().equals(recordNumber))
                 .findFirst();
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return patients.containsKey(id);
     }
 } 

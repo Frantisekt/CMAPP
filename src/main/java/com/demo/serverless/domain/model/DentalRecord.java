@@ -1,58 +1,57 @@
 package com.demo.serverless.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public class DentalRecord {
-    private String id;
-    private String patientId;
-    private LocalDateTime date;
+    private UUID id;
+    private UUID patientId;
     private String diagnosis;
     private String treatment;
     private String observations;
     private List<String> allergies;
     private List<String> medicalHistory;
     private List<String> attachments;
+    private LocalDate lastVisit;
+    private LocalDate nextVisit;
+    private boolean active;
 
     public DentalRecord() {
+        this.id = UUID.randomUUID();
+        this.active = true;
     }
 
-    public DentalRecord(String id, String patientId, LocalDateTime date, String diagnosis, String treatment, 
-                       String observations, List<String> allergies, List<String> medicalHistory, 
-                       List<String> attachments) {
-        this.id = id;
+    public DentalRecord(UUID patientId, String diagnosis, String treatment, 
+                       String observations, List<String> allergies, 
+                       List<String> medicalHistory, List<String> attachments,
+                       LocalDate lastVisit, LocalDate nextVisit) {
+        this();
         this.patientId = patientId;
-        this.date = date;
         this.diagnosis = diagnosis;
         this.treatment = treatment;
         this.observations = observations;
         this.allergies = allergies;
         this.medicalHistory = medicalHistory;
         this.attachments = attachments;
+        this.lastVisit = lastVisit;
+        this.nextVisit = nextVisit;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getPatientId() {
+    public UUID getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(UUID patientId) {
         this.patientId = patientId;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
     }
 
     public String getDiagnosis() {
@@ -101,5 +100,29 @@ public class DentalRecord {
 
     public void setAttachments(List<String> attachments) {
         this.attachments = attachments;
+    }
+
+    public LocalDate getLastVisit() {
+        return lastVisit;
+    }
+
+    public void setLastVisit(LocalDate lastVisit) {
+        this.lastVisit = lastVisit;
+    }
+
+    public LocalDate getNextVisit() {
+        return nextVisit;
+    }
+
+    public void setNextVisit(LocalDate nextVisit) {
+        this.nextVisit = nextVisit;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 } 
