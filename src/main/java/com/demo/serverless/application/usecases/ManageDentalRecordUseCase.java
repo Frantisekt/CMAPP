@@ -69,7 +69,7 @@ public class ManageDentalRecordUseCase {
             throw new IllegalArgumentException("El diagnóstico es requerido");
         }
 
-        if (dentalRecord.getTreatment() == null || dentalRecord.getTreatment().trim().isEmpty()) {
+        if (dentalRecord.getTreatment() == null) {
             throw new IllegalArgumentException("El tratamiento es requerido");
         }
     }

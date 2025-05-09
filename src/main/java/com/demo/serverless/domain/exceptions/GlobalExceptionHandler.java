@@ -29,6 +29,13 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(TreatmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTreatmentNotFoundException(TreatmentNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
     public static class ErrorResponse {
         private final String message;
 

@@ -8,7 +8,7 @@ public class DentalRecord {
     private UUID id;
     private UUID patientId;
     private String diagnosis;
-    private String treatment;
+    private Treatment treatment;
     private String observations;
     private List<String> allergies;
     private List<String> medicalHistory;
@@ -22,7 +22,7 @@ public class DentalRecord {
         this.active = true;
     }
 
-    public DentalRecord(UUID patientId, String diagnosis, String treatment, 
+    public DentalRecord(UUID patientId, String diagnosis, Treatment treatment, 
                        String observations, List<String> allergies, 
                        List<String> medicalHistory, List<String> attachments,
                        LocalDate lastVisit, LocalDate nextVisit) {
@@ -62,11 +62,11 @@ public class DentalRecord {
         this.diagnosis = diagnosis;
     }
 
-    public String getTreatment() {
+    public Treatment getTreatment() {
         return treatment;
     }
 
-    public void setTreatment(String treatment) {
+    public void setTreatment(Treatment treatment) {
         this.treatment = treatment;
     }
 
