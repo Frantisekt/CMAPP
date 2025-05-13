@@ -9,6 +9,7 @@ import com.demo.serverless.domain.ports.DentistRepository;
 import com.demo.serverless.domain.ports.PatientRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,28 @@ public class ManageAppointmentUseCase {
         this.appointmentRepository = appointmentRepository;
         this.dentistRepository = dentistRepository;
         this.patientRepository = patientRepository;
+    }
+
+    private String generateConsultationNumber() {
+        LocalDateTime now = LocalDateTime.now();
+        String year = now.format(DateTimeFormatter.ofPattern("yyyy"));
+        String month = now.format(DateTimeFormatter.ofPattern("MM"));
+        
+        // Obtener el último número de consulta del mes actual
+        List<Appointment> appointments = appointmentRepository.findAll();
+        int lastNumber = appointments.stream()
+            .filter(a -> a.getConsultationNumber() != null && 
+                        a.getConsultationNumber().startsWith("CON-" + year + "-" + month))
+            .mapToInt(a -> {
+                String[] parts = a.getConsultationNumber().split("-");
+                return Integer.parseInt(parts[parts.length - 1]);
+            })
+            .max()
+            .orElse(0);
+        
+        // Generar el nuevo número
+        int newNumber = lastNumber + 1;
+        return String.format("CON-%s-%s-%03d", year, month, newNumber);
     }
 
     public List<Appointment> getAllAppointments() {
@@ -47,6 +70,9 @@ public class ManageAppointmentUseCase {
                 appointment.getDentistId(), appointment.getDateTime())) {
             throw new IllegalArgumentException("El odontólogo ya tiene una cita en este horario");
         }
+
+        // Generar número de consulta
+        appointment.setConsultationNumber(generateConsultationNumber());
 
         return appointmentRepository.save(appointment);
     }
