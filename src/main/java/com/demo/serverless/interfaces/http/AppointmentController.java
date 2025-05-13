@@ -44,6 +44,11 @@ public class AppointmentController {
         return ResponseEntity.ok(manageAppointmentUseCase.getAppointmentsByDentistIdAndDate(dentistId, date));
     }
 
+    @GetMapping
+    public ResponseEntity<List<Appointment>> getAllAppointments() {
+        return ResponseEntity.ok(manageAppointmentUseCase.getAllAppointments());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(
             @PathVariable UUID id,

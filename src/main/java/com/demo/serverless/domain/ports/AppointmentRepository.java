@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface AppointmentRepository {
     Appointment save(Appointment appointment);
     Optional<Appointment> findById(UUID id);
+    List<Appointment> findAll();
     List<Appointment> findByPatientId(UUID patientId);
     List<Appointment> findByDentistId(UUID dentistId);
     List<Appointment> findByDentistIdAndDate(UUID dentistId, LocalDateTime date);

@@ -1,5 +1,6 @@
 package com.demo.serverless.application.usecases;
 
+import com.demo.serverless.application.services.RecordNumberGenerator;
 import com.demo.serverless.domain.exceptions.PatientNotFoundException;
 import com.demo.serverless.domain.model.Patient;
 import com.demo.serverless.domain.ports.PatientRepository;
@@ -12,12 +13,16 @@ import java.util.UUID;
 @Service
 public class ManagePatientUseCase {
     private final PatientRepository patientRepository;
+    private final RecordNumberGenerator recordNumberGenerator;
 
-    public ManagePatientUseCase(PatientRepository patientRepository) {
+    public ManagePatientUseCase(PatientRepository patientRepository,
+                              RecordNumberGenerator recordNumberGenerator) {
         this.patientRepository = patientRepository;
+        this.recordNumberGenerator = recordNumberGenerator;
     }
 
     public Patient createPatient(Patient patient) {
+        patient.setRecordNumber(recordNumberGenerator.generateRecordNumber());
         return patientRepository.save(patient);
     }
 

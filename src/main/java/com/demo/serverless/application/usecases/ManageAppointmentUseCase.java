@@ -27,6 +27,10 @@ public class ManageAppointmentUseCase {
         this.patientRepository = patientRepository;
     }
 
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
     public Appointment createAppointment(Appointment appointment) {
         // Validar que el odontólogo existe
         if (!dentistRepository.existsById(appointment.getDentistId())) {

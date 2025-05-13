@@ -15,6 +15,11 @@ public class InMemoryAppointmentRepository implements AppointmentRepository {
     private final Map<UUID, Appointment> appointments = new ConcurrentHashMap<>();
 
     @Override
+    public List<Appointment> findAll() {
+        return new ArrayList<>(appointments.values());
+    }
+
+    @Override
     public Appointment save(Appointment appointment) {
         appointments.put(appointment.getId(), appointment);
         return appointment;
