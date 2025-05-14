@@ -8,6 +8,7 @@ import com.demo.serverless.domain.ports.PatientRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -55,22 +56,99 @@ public class ManageDentalRecordUseCase {
         dentalRecordRepository.delete(id);
     }
 
+    // Métodos para actualizaciones parciales
+    public void addVisit(UUID recordId, DentalRecord.DentalVisit visit) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addVisit(recordId, visit);
+    }
+
+    public void addProcedure(UUID recordId, DentalRecord.DentalProcedure procedure) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addProcedure(recordId, procedure);
+    }
+
+    public void addImage(UUID recordId, DentalRecord.DentalImage image) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addImage(recordId, image);
+    }
+
+    public void addPrescription(UUID recordId, DentalRecord.Prescription prescription) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addPrescription(recordId, prescription);
+    }
+
+    public void updateMedicalHistory(UUID recordId, Map<String, Object> medicalHistory) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.updateMedicalHistory(recordId, medicalHistory);
+    }
+
+    public void updateDentalHistory(UUID recordId, Map<String, Object> dentalHistory) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.updateDentalHistory(recordId, dentalHistory);
+    }
+
+    public void addAllergy(UUID recordId, String allergy) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addAllergy(recordId, allergy);
+    }
+
+    public void addMedication(UUID recordId, String medication) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addMedication(recordId, medication);
+    }
+
+    public void addNote(UUID recordId, String key, Object value) {
+        validateRecordExists(recordId);
+        dentalRecordRepository.addNote(recordId, key, value);
+    }
+
+    // Métodos de búsqueda
+    public List<DentalRecord> findByDentistId(String dentistId) {
+        return dentalRecordRepository.findByDentistId(dentistId);
+    }
+
+    public List<DentalRecord> findByDateRange(LocalDate startDate, LocalDate endDate) {
+        return dentalRecordRepository.findByDateRange(startDate, endDate);
+    }
+
+    public List<DentalRecord> findByProcedure(String procedureName) {
+        return dentalRecordRepository.findByProcedure(procedureName);
+    }
+
+    public List<DentalRecord> findByMedication(String medication) {
+        return dentalRecordRepository.findByMedication(medication);
+    }
+
+    public List<DentalRecord> findByAllergy(String allergy) {
+        return dentalRecordRepository.findByAllergy(allergy);
+    }
+
     private void validateDentalRecord(DentalRecord dentalRecord) {
+        if (dentalRecord.getPatientId() == null) {
+            throw new IllegalArgumentException("El ID del paciente es requerido");
+        }
         if (!patientRepository.existsById(dentalRecord.getPatientId())) {
             throw PatientNotFoundException.byId(dentalRecord.getPatientId().toString());
         }
 
-        if (dentalRecord.getLastVisit() != null && dentalRecord.getNextVisit() != null 
-            && dentalRecord.getLastVisit().isAfter(dentalRecord.getNextVisit())) {
-            throw new IllegalArgumentException("La fecha de la última visita no puede ser posterior a la próxima visita");
+        // Validar que al menos haya una visita inicial
+        if (dentalRecord.getVisits() == null || dentalRecord.getVisits().isEmpty()) {
+            throw new IllegalArgumentException("Se requiere al menos una visita inicial");
         }
 
-        if (dentalRecord.getDiagnosis() == null || dentalRecord.getDiagnosis().trim().isEmpty()) {
-            throw new IllegalArgumentException("El diagnóstico es requerido");
+        // Validar que la primera visita tenga diagnóstico y tratamiento
+        DentalRecord.DentalVisit firstVisit = dentalRecord.getVisits().get(0);
+        if (firstVisit.getDiagnosis() == null || firstVisit.getDiagnosis().trim().isEmpty()) {
+            throw new IllegalArgumentException("El diagnóstico de la visita inicial es requerido");
         }
+        if (firstVisit.getTreatment() == null || firstVisit.getTreatment().trim().isEmpty()) {
+            throw new IllegalArgumentException("El tratamiento de la visita inicial es requerido");
+        }
+    }
 
-        if (dentalRecord.getTreatment() == null) {
-            throw new IllegalArgumentException("El tratamiento es requerido");
+    private void validateRecordExists(UUID recordId) {
+        if (!dentalRecordRepository.existsById(recordId)) {
+            throw DentalRecordNotFoundException.byId(recordId.toString());
         }
     }
 } 
